@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.5.xsd">
+
+    <changeSet id="init-db-business-entity" author="author">
+
+        <createTable tableName="hits" remarks="вызовы">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="app" type="VARCHAR(255)" remarks="приложение"/>
+            <column name="uri" type="VARCHAR(255)" remarks="uri вызова"/>
+            <column name="ip" type="VARCHAR(255)" remarks="адрес"/>
+            <column name="timestamp" type="DATETIME" remarks="время вызова"/>
+        </createTable>
+
+    </changeSet>
+
+</databaseChangeLog>
