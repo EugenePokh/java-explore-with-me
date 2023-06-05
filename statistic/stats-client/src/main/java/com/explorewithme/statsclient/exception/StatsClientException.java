@@ -1,4 +1,4 @@
-package com.explore_with_me.stats_client.exception;
+package com.explorewithme.statsclient.exception;
 
 public class StatsClientException extends RuntimeException {
     public StatsClientException(String message) {

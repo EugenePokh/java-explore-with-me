@@ -1,8 +1,8 @@
-package com.explore_with_me.server.controller;
+package com.explorewithme.server.controller;
 
-import com.explore_with_me.stats_client.StatsClient;
-import com.explore_with_me.stats_client.dto.HitCount;
-import com.explore_with_me.stats_client.dto.HitRequest;
+import com.explorewithme.dto.HitCountResponse;
+import com.explorewithme.dto.HitRequest;
+import com.explorewithme.statsclient.StatsClient;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +24,8 @@ public class HitController {
     }
 
     @GetMapping
-    public List<HitCount> getHitcount(@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-                                      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end) {
+    public List<HitCountResponse> getHitcount(@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+                                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end) {
         return statsClient.findStatisticUnique(start, end);
     }
 }

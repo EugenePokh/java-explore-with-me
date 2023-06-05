@@ -1,8 +1,8 @@
-package com.explore_with_me.stats_client;
+package com.explorewithme.statsclient;
 
-import com.explore_with_me.stats_client.dto.HitCount;
-import com.explore_with_me.stats_client.dto.HitRequest;
-import com.explore_with_me.stats_client.exception.StatsClientException;
+import com.explorewithme.dto.HitCountResponse;
+import com.explorewithme.dto.HitRequest;
+import com.explorewithme.statsclient.exception.StatsClientException;
 import lombok.AllArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -27,34 +27,34 @@ public class StatsClient {
 
     public void saveStatistic(HitRequest item) {
         ResponseEntity<String> response = restTemplate.postForEntity(uri + "/hit", item, String.class);
-        if (response.getStatusCode() != (HttpStatus.CREATED)) {
-            throw new StatsClientException("Post stats error - " + response.getBody());
+        if (response.getStatusCode() != HttpStatus.CREATED) {
+            throw new StatsClientException("Post stats error: http status code - " + response.getStatusCode() + ", response body - " + response.getBody());
         }
     }
 
-    public List<HitCount> findStatisticNonUnique(LocalDateTime start,
-                                                 LocalDateTime end) {
+    public List<HitCountResponse> findStatisticNonUnique(LocalDateTime start,
+                                                         LocalDateTime end) {
         return findStatistic(start, end, false, null);
 
     }
 
-    public List<HitCount> findStatisticUnique(LocalDateTime start,
+    public List<HitCountResponse> findStatisticUnique(LocalDateTime start,
                                               LocalDateTime end) {
         return findStatistic(start, end, true, null);
     }
 
 
-    public List<HitCount> findHitCountsByUrisUnique(LocalDateTime start,
+    public List<HitCountResponse> findHitCountsByUrisUnique(LocalDateTime start,
                                                     LocalDateTime end,
                                                     List<String> uris) {
         return findStatistic(start, end, true, uris);
     }
 
-    public List<HitCount> findHitCountsByUrisNonUnique(LocalDateTime start, LocalDateTime end, List<String> uris) {
+    public List<HitCountResponse> findHitCountsByUrisNonUnique(LocalDateTime start, LocalDateTime end, List<String> uris) {
         return findStatistic(start, end, false, uris);
     }
 
-    private List<HitCount> findStatistic(LocalDateTime start,
+    private List<HitCountResponse> findStatistic(LocalDateTime start,
                                          LocalDateTime end,
                                          Boolean unique,
                                          List<String> uris) {
@@ -64,7 +64,7 @@ public class StatsClient {
                 url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<HitCount>>() {
+                new ParameterizedTypeReference<List<HitCountResponse>>() {
                 }
         ).getBody();
     }

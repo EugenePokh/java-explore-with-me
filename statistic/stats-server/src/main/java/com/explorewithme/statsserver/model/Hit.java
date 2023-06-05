@@ -1,4 +1,4 @@
-package com.explore_with_me.stats_server.model;
+package com.explorewithme.statsserver.model;
 
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -11,7 +11,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
 @Table(name = "hits")
 public class Hit {
 

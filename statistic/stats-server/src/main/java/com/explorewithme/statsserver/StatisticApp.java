@@ -1,4 +1,4 @@
-package com.explore_with_me.stats_server;
+package com.explorewithme.statsserver;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

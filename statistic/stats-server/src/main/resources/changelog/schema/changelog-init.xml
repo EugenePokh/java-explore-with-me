@@ -19,6 +19,11 @@
             <column name="timestamp" type="DATETIME" remarks="время вызова"/>
         </createTable>
 
+        <createIndex indexName="idx_hits_timestamp_uri" tableName="hits">
+            <column name="timestamp"/>
+            <column name="uri"/>
+        </createIndex>
+
     </changeSet>
 
 </databaseChangeLog>

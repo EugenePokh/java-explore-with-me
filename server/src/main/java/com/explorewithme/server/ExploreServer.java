@@ -1,6 +1,6 @@
-package com.explore_with_me.server;
+package com.explorewithme.server;
 
-import com.explore_with_me.stats_client.StatsClientConfig;
+import com.explorewithme.statsclient.StatsClientConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;

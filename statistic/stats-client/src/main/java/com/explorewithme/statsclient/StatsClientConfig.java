@@ -1,4 +1,4 @@
-package com.explore_with_me.stats_client;
+package com.explorewithme.statsclient;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

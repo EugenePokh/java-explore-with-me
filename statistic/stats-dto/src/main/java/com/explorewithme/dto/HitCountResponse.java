@@ -1,12 +1,16 @@
-package com.explore_with_me.stats_server.model;
+package com.explorewithme.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 @AllArgsConstructor
-public class HitCount {
+public class HitCountResponse {
+
     private String app;
     private String uri;
     private Long hits;
+
 }
