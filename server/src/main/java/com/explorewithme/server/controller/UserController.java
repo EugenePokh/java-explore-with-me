@@ -39,7 +39,8 @@ public class UserController {
     @PostMapping
     public EventResponseDto postEvent(@PathVariable Integer userId,
                                       @RequestBody @Valid EventPostRequestDto eventRequestDto) {
-        User user = userService.findById(userId).orElseThrow(() -> new UserNotFoundException("No such user with id - " + userId));
+        User user = userService.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("No such user with id - " + userId));
         Category category = categoryService.findById(eventRequestDto.getCategory())
                 .orElseThrow(() -> new CategoryNotFoundException("No such category with id - " + eventRequestDto.getCategory()));
 

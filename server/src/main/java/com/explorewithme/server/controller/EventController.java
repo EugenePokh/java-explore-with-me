@@ -51,11 +51,11 @@ public class EventController {
                                           @RequestParam(required = false, defaultValue = "10") Integer size,
                                           @RequestParam(required = false) LocalDateTime rangeStat,
                                           @RequestParam(required = false) LocalDateTime rangeEnd,
-                                          @RequestParam String text,
+                                          @RequestParam(required = false) String text,
                                           @RequestParam(required = false) List<Integer> categories,
-                                          @RequestParam Boolean paid,
-                                          @RequestParam Boolean onlyAvailable,
-                                          @RequestParam EventSort sort,
+                                          @RequestParam(required = false) Boolean paid,
+                                          @RequestParam(required = false) Boolean onlyAvailable,
+                                          @RequestParam(required = false) EventSort sort,
                                           HttpServletRequest httpServletRequest) {
 
         client.saveStatistic(

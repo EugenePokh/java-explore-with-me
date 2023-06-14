@@ -79,13 +79,14 @@ public class AdminController {
     }
 
     @PostMapping("/users")
-    public User postUser(@RequestBody @Valid UserRequestDto userRequestDto) {
+    public ResponseEntity<User> postUser(@RequestBody @Valid UserRequestDto userRequestDto) {
         User user = new User();
         user.setEmail(userRequestDto.getEmail());
         user.setName(userRequestDto.getName());
         user.setCreated(LocalDateTime.now());
 
-        return userService.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userService.save(user));
     }
 
     @DeleteMapping("/users/{userId}")
