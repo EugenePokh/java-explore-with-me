@@ -10,12 +10,16 @@ import java.time.LocalDateTime;
 public class EventPostRequestDto {
 
     @NotBlank
+    @Max(value = 2000)
+    @Min(value = 20)
     private String annotation;
 
     @NotNull
     private Integer category;
 
     @NotBlank
+    @Max(value = 7000)
+    @Min(value = 20)
     private String description;
 
     @EventDateConstraint
@@ -26,13 +30,15 @@ public class EventPostRequestDto {
     @NotNull
     private LocationDto location;
 
-    private Boolean paid;
+    private Boolean paid = false;
 
-    @Min(1)
-    private Integer participantLimit;
+    @PositiveOrZero
+    private Integer participantLimit = 0;
 
-    private Boolean requestModeration;
+    private Boolean requestModeration = true;
 
     @NotBlank
+    @Max(value = 120)
+    @Min(value = 3)
     private String title;
 }
