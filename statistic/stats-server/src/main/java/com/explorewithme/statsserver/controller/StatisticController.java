@@ -1,7 +1,7 @@
 package com.explorewithme.statsserver.controller;
 
-import com.explorewithme.dto.HitCountResponse;
-import com.explorewithme.dto.HitRequest;
+import com.explorewithme.dto.HitCountResponseDto;
+import com.explorewithme.dto.HitRequestDto;
 import com.explorewithme.statsserver.mapper.HitMapper;
 import com.explorewithme.statsserver.model.*;
 import com.explorewithme.statsserver.service.HitService;
@@ -24,7 +24,7 @@ public class StatisticController {
     private final HitService hitService;
 
     @PostMapping("/hit")
-    public ResponseEntity<Void> hit(@Valid @RequestBody HitRequest hitDto) {
+    public ResponseEntity<Void> hit(@Valid @RequestBody HitRequestDto hitDto) {
         Hit hit = HitMapper.toModel(hitDto);
         hitService.save(hit);
 
@@ -33,10 +33,10 @@ public class StatisticController {
     }
 
     @GetMapping("/stats")
-    public List<HitCountResponse> stats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
-                                        @RequestParam(required = false) List<String> uris,
-                                        @RequestParam(required = false, defaultValue = "false") Boolean unique) {
+    public List<HitCountResponseDto> stats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+                                           @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+                                           @RequestParam(required = false) List<String> uris,
+                                           @RequestParam(required = false, defaultValue = "false") Boolean unique) {
         return hitService.findHitCounts(start, end, uris, unique);
 
     }

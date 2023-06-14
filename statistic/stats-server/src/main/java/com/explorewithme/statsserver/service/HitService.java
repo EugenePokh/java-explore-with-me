@@ -1,6 +1,6 @@
 package com.explorewithme.statsserver.service;
 
-import com.explorewithme.dto.HitCountResponse;
+import com.explorewithme.dto.HitCountResponseDto;
 import com.explorewithme.statsserver.model.Hit;
 import com.explorewithme.statsserver.repository.HitRepository;
 import lombok.AllArgsConstructor;
@@ -26,8 +26,8 @@ public class HitService {
         return hitRepository.save(hit);
     }
 
-    public List<HitCountResponse> findHitCounts(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        List<HitCountResponse> hitCounts;
+    public List<HitCountResponseDto> findHitCounts(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        List<HitCountResponseDto> hitCounts;
         if (Objects.nonNull(uris) && !uris.isEmpty() && !unique) {
             hitCounts = hitRepository.findHitCountsByUris(start, end, uris);
         } else if (Objects.nonNull(uris) && !uris.isEmpty() && unique) {

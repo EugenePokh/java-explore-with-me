@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.5.xsd">
+
+    <changeSet id="init-db-business-entity" author="author">
+
+        <createTable tableName="users" remarks="пользователи">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="email" type="VARCHAR(255)" remarks="эл. почта">
+                <constraints unique="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)" remarks="имя"/>
+            <column name="created" type="DATETIME" remarks="время создания"/>
+        </createTable>
+
+        <createTable tableName="categories" remarks="категории">
+            <column autoIncrement="true" name="id" type="Integer">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)" remarks="название">
+                <constraints unique="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="events" remarks="события">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="annotation" type="VARCHAR(255)" remarks="примечание"/>
+            <column name="category_id" type="INTEGER" remarks="категория"/>
+            <column name="author_id" type="INTEGER" remarks="автор события"/>
+            <column name="description" type="VARCHAR(255)" remarks="описание"/>
+            <column name="event_date" type="DATETIME" remarks="время события"/>
+            <column name="lat" type="DOUBLE" remarks="широта"/>
+            <column name="lon" type="DOUBLE" remarks="долгота"/>
+            <column name="paid" type="BOOLEAN" remarks="оплачено"/>
+            <column name="participant_limit" type="INTEGER" remarks="лимит участников"/>
+            <column name="req_moderation" type="BOOLEAN" remarks="запрос на модерацию"/>
+            <column name="title" type="VARCHAR(255)" remarks="название"/>
+            <column name="state" type="VARCHAR(255)" remarks="статус"/>
+            <column name="created" type="DATETIME" remarks="время создания"/>
+            <column name="published" type="DATETIME" remarks="время публикации"/>
+        </createTable>
+
+        <createTable tableName="requests" remarks="запросы на участие">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="requester_id" type="INTEGER" remarks="запрашивающий пользователь"/>
+            <column name="event_id" type="INTEGER" remarks="событие"/>
+            <column name="created" type="DATETIME" remarks="время создания"/>
+            <column name="state" type="VARCHAR(255)" remarks="статус"/>
+        </createTable>
+
+        <createTable tableName="compilations" remarks="подборки">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="pinned" type="BOOLEAN" remarks="закреплено"/>
+            <column name="title" type="VARCHAR(255)" remarks="название"/>
+        </createTable>
+
+        <createTable tableName="event_compilation" remarks="связь подборок и событий">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="compilation_id" type="INTEGER" remarks="подборка"/>
+            <column name="event_id" type="INTEGER" remarks="событие"/>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="init-db-link-entity" author="author">
+
+        <addForeignKeyConstraint baseColumnNames="category_id"
+                                 baseTableName="events"
+                                 constraintName="fk_events_category_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="categories"/>
+
+        <addForeignKeyConstraint baseColumnNames="author_id"
+                                 baseTableName="events"
+                                 constraintName="fk_events_author_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
+
+        <addForeignKeyConstraint baseColumnNames="requester_id"
+                                 baseTableName="requests"
+                                 constraintName="fk_requests_requester_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
+
+        <addForeignKeyConstraint baseColumnNames="event_id"
+                                 baseTableName="requests"
+                                 constraintName="fk_requests_event_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="events"/>
+
+        <addForeignKeyConstraint baseColumnNames="compilation_id"
+                                 baseTableName="event_compilation"
+                                 constraintName="fk_event_compilation_compilation_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="compilations"/>
+
+        <addForeignKeyConstraint baseColumnNames="event_id"
+                                 baseTableName="event_compilation"
+                                 constraintName="fk_event_compilation_event_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="events"/>
+
+        <addUniqueConstraint tableName="requests" columnNames="requester_id, event_id"/>
+    </changeSet>
+
+</databaseChangeLog>
