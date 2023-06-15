@@ -38,11 +38,10 @@ public class EventService {
     public Page<Event> findAllBySearch(List<Integer> users,
                                        List<Event.State> states,
                                        List<Integer> categories,
-                                       LocalDateTime rangeStat,
+                                       LocalDateTime rangeStart,
                                        LocalDateTime rangeEnd,
                                        PageRequest page) {
-        return eventRepository.findAllBySearch(users, states, categories, //rangeStat, rangeEnd,
-                page);
+        return eventRepository.findAllBySearch(users, states, categories, rangeStart, rangeEnd, page);
     }
 
     public Optional<Event> findById(Integer eventId) {
@@ -53,7 +52,13 @@ public class EventService {
         return eventRepository.findAllByIdIn(events);
     }
 
-    public Page<Event> findAllBySearch(String text, List<Integer> categories, Boolean paid, Boolean onlyAvailable, PageRequest page) {
-        return eventRepository.findAllBySearch(text, categories, paid, onlyAvailable, page);
+    public Page<Event> findAllBySearch(String text,
+                                       List<Integer> categories,
+                                       Boolean paid,
+                                       Boolean onlyAvailable,
+                                       LocalDateTime rangeStart,
+                                       LocalDateTime rangeEnd,
+                                       PageRequest page) {
+        return eventRepository.findAllBySearch(text, categories, paid, rangeStart, rangeEnd, page);
     }
 }

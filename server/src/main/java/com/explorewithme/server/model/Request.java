@@ -36,7 +36,8 @@ public class Request {
 
     public enum State {
         PENDING,
-        CANCELED,
-        CONFIRMED
+        REJECTED,
+        CONFIRMED,
+        CANCELED
     }
 }

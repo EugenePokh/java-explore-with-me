@@ -2,7 +2,7 @@ package com.explorewithme.server.mapper;
 
 import com.explorewithme.server.dto.EventResponseDto;
 import com.explorewithme.server.dto.LocationDto;
-import com.explorewithme.server.dto.UserResponseDto;
+import com.explorewithme.server.dto.UserEventResponseDto;
 import com.explorewithme.server.model.Event;
 import com.explorewithme.server.model.Request;
 import lombok.experimental.UtilityClass;
@@ -20,7 +20,7 @@ public class EventMapper {
                         0 : event.getRequests().stream().filter(request -> request.getState() == Request.State.CONFIRMED).count())
                 .description(event.getDescription())
                 .eventDate(event.getEventDate())
-                .initiator(UserResponseDto.builder()
+                .initiator(UserEventResponseDto.builder()
                         .id(event.getAuthor().getId())
                         .name(event.getAuthor().getName())
                         .build())
@@ -34,7 +34,7 @@ public class EventMapper {
                 .requestModeration(event.getRequestModeration())
                 .state(event.getState())
                 .title(event.getTitle())
-                .views(null) //todo
+                .views(null)
                 .build();
     }
 }

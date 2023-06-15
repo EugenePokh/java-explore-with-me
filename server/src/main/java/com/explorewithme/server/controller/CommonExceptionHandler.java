@@ -5,6 +5,7 @@ import com.explorewithme.server.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -44,8 +45,8 @@ public class CommonExceptionHandler {
                 .body(errorMessage);
     }
 
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ErrorMessage> handleValidationException(ValidationException e) {
+    @ExceptionHandler({ValidationException.class, MissingServletRequestParameterException.class})
+    public ResponseEntity<ErrorMessage> handleValidationException(Exception e) {
         ErrorMessage errorMessage = ErrorMessage.builder()
                 .status(HttpStatus.BAD_REQUEST)
                 .reason("Validation error.")

@@ -1,8 +1,8 @@
 package com.explorewithme.server.service;
 
-import com.explorewithme.server.dto.CompilationRequestDto;
+import com.explorewithme.server.dto.CompilationPostRequestDto;
 import com.explorewithme.server.model.Compilation;
-import com.explorewithme.server.model.EventCompilation;
+import com.explorewithme.server.model.Event;
 import com.explorewithme.server.repository.CompilationRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -34,26 +33,18 @@ public class CompilationService {
         return compilationRepository.findById(compilationId);
     }
 
-    public Compilation create(CompilationRequestDto dto) {
+    public Compilation create(CompilationPostRequestDto dto) {
         Compilation compilation = new Compilation();
         compilation.setPinned(dto.getPinned());
         compilation.setTitle(dto.getTitle());
-        compilationRepository.save(compilation);
 
-        List<EventCompilation> eventCompilations = eventService.findAllByIdIn(dto.getEvents())
-                .stream()
-                .map(event -> {
-                    EventCompilation eventCompilation = new EventCompilation();
-                    eventCompilation.setEvent(event);
-                    eventCompilation.setCompilation(compilation);
-                    return eventCompilation;
-                })
-                .collect(Collectors.toList());
-        eventCompilationService.saveAll(eventCompilations);
+        if (dto.getEvents() != null) {
+            List<Event> eventCompilations = eventService.findAllByIdIn(dto.getEvents());
+            compilation.setEvents(eventCompilations);
+        }
 
         logger.info("Create compilation - " + compilation);
-        return compilationRepository.findById(compilation.getId())
-                .get();
+        return compilationRepository.saveAndFlush(compilation);
     }
 
     public void delete(Compilation compilation) {

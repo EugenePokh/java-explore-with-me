@@ -6,7 +6,7 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 @Data
-public class CompilationRequestDto {
+public class CompilationPatchRequestDto {
 
     private List<Integer> events;
     private Boolean pinned = false;

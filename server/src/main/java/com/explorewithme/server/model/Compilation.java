@@ -25,7 +25,12 @@ public class Compilation {
     @Column
     private Boolean pinned;
 
-    @OneToMany(mappedBy = "event")
-    private List<EventCompilation> eventCompilations;
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "event_compilation",
+            joinColumns = {@JoinColumn(name = "compilation_id")},
+            inverseJoinColumns = {@JoinColumn(name = "event_id")}
+    )
+    private List<Event> events;
 
 }

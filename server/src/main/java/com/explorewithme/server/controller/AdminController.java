@@ -7,17 +7,20 @@ import com.explorewithme.server.exception.CompilationNotFoundException;
 import com.explorewithme.server.exception.EventNotFoundException;
 import com.explorewithme.server.exception.UserNotFoundException;
 import com.explorewithme.server.mapper.EventMapper;
+import com.explorewithme.server.mapper.UserMapper;
 import com.explorewithme.server.model.*;
 import com.explorewithme.server.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +36,6 @@ public class AdminController {
     private final EventService eventService;
     private final UserService userService;
     private final CompilationService compilationService;
-    private final EventCompilationService eventCompilationService;
 
     @PostMapping("/categories")
     @LogExecutionTime
@@ -64,10 +66,10 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    public List<User> findAllUsers(@RequestParam(required = false) List<Integer> ids,
-                                   @RequestParam(required = false, defaultValue = "0") Integer from,
-                                   @RequestParam(required = false, defaultValue = "10") Integer size) {
-        PageRequest page = PageRequest.of(from / size, size, Sort.by("created").descending());
+    public List<UserResponseDto> findAllUsers(@RequestParam(required = false) List<Integer> ids,
+                                              @RequestParam(required = false, defaultValue = "0") Integer from,
+                                              @RequestParam(required = false, defaultValue = "10") Integer size) {
+        PageRequest page = PageRequest.of(from / size, size, Sort.by("created").ascending());
         Page<User> users;
         if (Objects.nonNull(ids) && !ids.isEmpty()) {
             users = userService.findAllByIds(ids, page);
@@ -75,7 +77,10 @@ public class AdminController {
             users = userService.findAll(page);
         }
 
-        return users.getContent();
+        return users.getContent()
+                .stream()
+                .map(UserMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/users")
@@ -103,10 +108,16 @@ public class AdminController {
                                                 @RequestParam(required = false) List<Integer> users,
                                                 @RequestParam(required = false) List<Event.State> states,
                                                 @RequestParam(required = false) List<Integer> categories,
-                                                @RequestParam(required = false) LocalDateTime rangeStat,
-                                                @RequestParam(required = false) LocalDateTime rangeEnd) {
+                                                @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
+                                                @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd) {
+        if (rangeEnd != null && rangeStart != null) {
+            if (rangeEnd.isBefore(rangeStart)) {
+                throw new ValidationException("rangeEnd can not be before rangeStart");
+            }
+        }
+
         PageRequest page = PageRequest.of(from / size, size);
-        return eventService.findAllBySearch(users, states, categories, rangeStat, rangeEnd, page)
+        return eventService.findAllBySearch(users, states, categories, rangeStart, rangeEnd, page)
                 .getContent()
                 .stream()
                 .map(EventMapper::toDto)
@@ -164,6 +175,10 @@ public class AdminController {
         }
 
         if (Objects.nonNull(eventRequestDto.getStateAction())) {
+            if (event.getState() != Event.State.PENDING) {
+                throw new IllegalArgumentException("For change event status - it must be in PENDING status");
+            }
+
             Event.State state;
             if (eventRequestDto.getStateAction() == EventPatchRequestDto.StateAction.PUBLISH_EVENT) {
                 state = Event.State.PUBLISHED;
@@ -179,8 +194,10 @@ public class AdminController {
     }
 
     @PostMapping("/compilations")
-    public Compilation postCompilation(@RequestBody @Valid CompilationRequestDto dto) {
-        return compilationService.create(dto);
+    public ResponseEntity<Compilation> postCompilation(@RequestBody @Valid CompilationPostRequestDto dto) {
+        Compilation compilation = compilationService.create(dto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(compilation);
     }
 
     @DeleteMapping("/compilations/{compilationId}")
@@ -195,18 +212,18 @@ public class AdminController {
 
     @PatchMapping("/compilations/{compilationId}")
     public Compilation patchCompilation(@PathVariable Integer compilationId,
-                                        @RequestBody @Valid CompilationRequestDto dto) {
+                                        @RequestBody @Valid CompilationPatchRequestDto dto) {
         Compilation compilation = compilationService.findById(compilationId)
                 .orElseThrow(() -> new CompilationNotFoundException("No such category with id - " + compilationId));
 
         if (Objects.nonNull(dto.getEvents())) {
-            List<EventCompilation> eventCompilations;
+            List<Event> eventCompilations;
             if (dto.getEvents().isEmpty()) {
                 eventCompilations = new ArrayList<>();
             } else {
-                eventCompilations = eventCompilationService.findAllByCompilationAndEventIdIn(compilation, dto.getEvents());
+                eventCompilations = eventService.findAllByIdIn(dto.getEvents());
             }
-            compilation.setEventCompilations(eventCompilations);
+            compilation.setEvents(eventCompilations);
         }
 
         if (Objects.nonNull(dto.getTitle())) {
