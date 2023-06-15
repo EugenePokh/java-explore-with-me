@@ -33,11 +33,16 @@ public class StatisticController {
     }
 
     @GetMapping("/stats")
-    public List<HitCountResponseDto> stats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-                                           @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
-                                           @RequestParam(required = false) List<String> uris,
-                                           @RequestParam(required = false, defaultValue = "false") Boolean unique) {
-        return hitService.findHitCounts(start, end, uris, unique);
+    public ResponseEntity<List<HitCountResponseDto>> stats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+                                                           @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+                                                           @RequestParam(required = false) List<String> uris,
+                                                           @RequestParam(required = false, defaultValue = "false") Boolean unique) {
+        if (end.isBefore(start)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(hitService.findHitCounts(start, end, uris, unique));
 
     }
 
