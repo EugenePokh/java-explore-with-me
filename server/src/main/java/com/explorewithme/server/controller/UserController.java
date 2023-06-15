@@ -17,6 +17,8 @@ import com.explorewithme.server.service.RequestService;
 import com.explorewithme.server.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -37,9 +39,10 @@ public class UserController {
     private final RequestService requestService;
 
     @PostMapping
-    public EventResponseDto postEvent(@PathVariable Integer userId,
-                                      @RequestBody @Valid EventPostRequestDto eventRequestDto) {
-        User user = userService.findById(userId).orElseThrow(() -> new UserNotFoundException("No such user with id - " + userId));
+    public ResponseEntity<EventResponseDto> postEvent(@PathVariable Integer userId,
+                                                     @RequestBody @Valid EventPostRequestDto eventRequestDto) {
+        User user = userService.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("No such user with id - " + userId));
         Category category = categoryService.findById(eventRequestDto.getCategory())
                 .orElseThrow(() -> new CategoryNotFoundException("No such category with id - " + eventRequestDto.getCategory()));
 
@@ -61,7 +64,8 @@ public class UserController {
 
         Event newEvent = eventService.save(event);
 
-        return EventMapper.toDto(newEvent);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(EventMapper.toDto(newEvent));
     }
 
     @GetMapping
@@ -93,6 +97,10 @@ public class UserController {
         User author = userService.findById(userId).orElseThrow(() -> new UserNotFoundException("No such user with id - " + userId));
         Event event = eventService.findByAuthorAndId(author, eventId)
                 .orElseThrow(() -> new EventNotFoundException("No such event with id - " + eventId + " for user with id - " + userId));
+
+        if (event.getState() == Event.State.PUBLISHED) {
+            throw new IllegalArgumentException("Can not update published event");
+        }
 
         if (Objects.nonNull(eventRequestDto.getEventDate())) {
             event.setEventDate(eventRequestDto.getEventDate());
@@ -140,10 +148,9 @@ public class UserController {
 
         if (Objects.nonNull(eventRequestDto.getStateAction())) {
             Event.State state;
-            if (eventRequestDto.getStateAction() == EventPatchRequestDto.StateAction.PUBLISH_EVENT) {
-                state = Event.State.PUBLISHED;
-                event.setPublished(LocalDateTime.now());
-            } else if (eventRequestDto.getStateAction() == EventPatchRequestDto.StateAction.REJECT_EVENT) {
+            if (eventRequestDto.getStateAction() == EventPatchRequestDto.StateAction.SEND_TO_REVIEW) {
+                state = Event.State.PENDING;
+            } else if (eventRequestDto.getStateAction() == EventPatchRequestDto.StateAction.CANCEL_REVIEW) {
                 state = Event.State.CANCELED;
             } else {
                 throw new IllegalArgumentException("Define behavior for status " + eventRequestDto.getStateAction());
@@ -162,8 +169,8 @@ public class UserController {
         Event event = eventService.findByAuthorAndId(author, eventId)
                 .orElseThrow(() -> new EventNotFoundException("No such event with id - " + eventId + " for user with id - " + userId));
 
-        return requestService.findAllByRequesorAndEvent(author, event)
-                .stream()
+        List<Request> requests = requestService.findAllByEvent(event);//findAllByRequesterAndEvent(author, event);
+        return requests.stream()
                 .map(RequestMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -177,7 +184,7 @@ public class UserController {
         Event event = eventService.findByAuthorAndId(author, eventId)
                 .orElseThrow(() -> new EventNotFoundException("No such event with id - " + eventId + " for user with id - " + userId));
 
-        if (requestService.countAllByIdInAndStateIn(changeStateDto.getRequestIds(), Arrays.asList(Request.State.CANCELED, Request.State.CONFIRMED)) > 0) {
+        if (requestService.countAllByIdInAndStateIn(changeStateDto.getRequestIds(), Arrays.asList(Request.State.REJECTED, Request.State.CONFIRMED)) > 0) {
             throw new EventValidationException("Request ids has illegal state");
         }
 
@@ -186,12 +193,15 @@ public class UserController {
         if (status == ChangeStateRequestDto.Status.CONFIRMED) {
             state = Request.State.CONFIRMED;
         } else if (status == ChangeStateRequestDto.Status.REJECTED) {
-            state = Request.State.CANCELED;
+            state = Request.State.REJECTED;
         } else {
             throw new IllegalArgumentException("There is no behavior for status " + status);
         }
 
-        List<Request> requests = requestService.changeState(event, changeStateDto.getRequestIds(), state);
+        List<RequestResponseDto> requests = requestService.changeState(event, changeStateDto.getRequestIds(), state)
+                .stream()
+                .map(RequestMapper::toDto)
+                .collect(Collectors.toList());
 
         ChangeStateResponseDto changeStateResponseDto = new ChangeStateResponseDto();
         if (status == ChangeStateRequestDto.Status.CONFIRMED) {

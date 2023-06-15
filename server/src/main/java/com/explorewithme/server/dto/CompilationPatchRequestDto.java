@@ -2,18 +2,16 @@ package com.explorewithme.server.dto;
 
 import lombok.Data;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Data
-public class CompilationRequestDto {
+public class CompilationPatchRequestDto {
 
     private List<Integer> events;
     private Boolean pinned = false;
 
-    @Max(value = 50)
-    @Min(value = 1)
+    @Size(min = 1, max = 50)
     private String title;
 
 }

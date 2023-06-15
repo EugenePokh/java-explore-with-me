@@ -52,7 +52,7 @@ public class RequestController {
     }
 
     @PatchMapping("{requestId}/cancel")
-    public RequestResponseDto patch(@PathVariable Integer userId,
+    public RequestResponseDto cancelRequest(@PathVariable Integer userId,
                          @PathVariable Integer requestId) {
         User user = userService.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("No such user with id - " + userId));

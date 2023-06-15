@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -25,7 +24,7 @@ public class RequestService {
 
     public Request cancel(Request request) {
         request.setState(Request.State.CANCELED);
-        logger.info("Cancel request - " + request);
+        logger.info("Cancel request - " + request.getId());
         return requestRepository.save(request);
     }
 
@@ -46,8 +45,7 @@ public class RequestService {
             throw new RequestValidationException("Event`s authors can not add request");
         }
 
-        if (Objects.nonNull(event.getParticipantLimit())
-                && event.getParticipantLimit() <= requestRepository.countAllByEventAndState(event, Request.State.CONFIRMED)) {
+        if (event.getParticipantLimit() != 0 && event.getParticipantLimit() <= requestRepository.countAllByEventAndState(event, Request.State.CONFIRMED)) {
             throw new RequestValidationException("Event`s participant size is full");
         }
 
@@ -57,17 +55,13 @@ public class RequestService {
         request.setCreated(LocalDateTime.now());
 
         Request.State state = Request.State.PENDING;
-        if (!event.getRequestModeration()) {
+        if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
             state = Request.State.CONFIRMED;
         }
         request.setState(state);
 
         logger.info("Create request - " + request);
         return requestRepository.save(request);
-    }
-
-    public List<Request> findAllByRequesorAndEvent(User user, Event event) {
-        return requestRepository.findAllByRequesterAndEvent(user, event);
     }
 
     public List<Request> changeState(Event event, List<Integer> requestIds, Request.State state) {
@@ -80,5 +74,9 @@ public class RequestService {
 
     public long countAllByIdInAndStateIn(List<Integer> requestIds, List<Request.State> states) {
         return requestRepository.countAllByIdInAndStateIn(requestIds, states);
+    }
+
+    public List<Request> findAllByEvent(Event event) {
+        return requestRepository.findAllByEvent(event);
     }
 }

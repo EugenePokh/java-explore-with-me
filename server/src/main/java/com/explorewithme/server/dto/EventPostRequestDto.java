@@ -10,16 +10,14 @@ import java.time.LocalDateTime;
 public class EventPostRequestDto {
 
     @NotBlank
-    @Max(value = 2000)
-    @Min(value = 20)
+    @Size(min = 20, max = 2000)
     private String annotation;
 
     @NotNull
     private Integer category;
 
     @NotBlank
-    @Max(value = 7000)
-    @Min(value = 20)
+    @Size(min = 20, max = 7000)
     private String description;
 
     @EventDateConstraint
@@ -38,7 +36,6 @@ public class EventPostRequestDto {
     private Boolean requestModeration = true;
 
     @NotBlank
-    @Max(value = 120)
-    @Min(value = 3)
+    @Size(min = 3, max = 120)
     private String title;
 }
