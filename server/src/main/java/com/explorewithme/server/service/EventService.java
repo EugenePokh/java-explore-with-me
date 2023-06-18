@@ -116,7 +116,6 @@ public class EventService {
                         .orElseThrow(() -> new EventNotFoundException("No such event with id - " + eventId)),
                 hits);
 
-
         return dto;
     }
 
