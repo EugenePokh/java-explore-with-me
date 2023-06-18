@@ -13,10 +13,10 @@
             <column autoIncrement="true" name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" unique="true"/>
             </column>
-            <column name="email" type="VARCHAR(255)" remarks="эл. почта">
+            <column name="email" type="VARCHAR(254)" remarks="эл. почта">
                 <constraints unique="true"/>
             </column>
-            <column name="name" type="VARCHAR(255)" remarks="имя"/>
+            <column name="name" type="VARCHAR(250)" remarks="имя"/>
             <column name="created" type="DATETIME" remarks="время создания"/>
         </createTable>
 
@@ -24,7 +24,7 @@
             <column autoIncrement="true" name="id" type="Integer">
                 <constraints nullable="false" primaryKey="true" unique="true"/>
             </column>
-            <column name="name" type="VARCHAR(255)" remarks="название">
+            <column name="name" type="VARCHAR(50)" remarks="название">
                 <constraints unique="true"/>
             </column>
         </createTable>
@@ -33,17 +33,17 @@
             <column autoIncrement="true" name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" unique="true"/>
             </column>
-            <column name="annotation" type="VARCHAR(255)" remarks="примечание"/>
+            <column name="annotation" type="VARCHAR(2000)" remarks="примечание"/>
             <column name="category_id" type="INTEGER" remarks="категория"/>
             <column name="author_id" type="INTEGER" remarks="автор события"/>
-            <column name="description" type="VARCHAR(255)" remarks="описание"/>
+            <column name="description" type="VARCHAR(7000)" remarks="описание"/>
             <column name="event_date" type="DATETIME" remarks="время события"/>
             <column name="lat" type="DOUBLE" remarks="широта"/>
             <column name="lon" type="DOUBLE" remarks="долгота"/>
             <column name="paid" type="BOOLEAN" remarks="оплачено"/>
             <column name="participant_limit" type="INTEGER" remarks="лимит участников"/>
             <column name="req_moderation" type="BOOLEAN" remarks="запрос на модерацию"/>
-            <column name="title" type="VARCHAR(255)" remarks="название"/>
+            <column name="title" type="VARCHAR(120)" remarks="название"/>
             <column name="state" type="VARCHAR(255)" remarks="статус"/>
             <column name="created" type="DATETIME" remarks="время создания"/>
             <column name="published" type="DATETIME" remarks="время публикации"/>
@@ -64,7 +64,7 @@
                 <constraints nullable="false" primaryKey="true" unique="true"/>
             </column>
             <column name="pinned" type="BOOLEAN" remarks="закреплено"/>
-            <column name="title" type="VARCHAR(255)" remarks="название"/>
+            <column name="title" type="VARCHAR(50)" remarks="название"/>
         </createTable>
 
         <createTable tableName="event_compilation" remarks="связь подборок и событий">
@@ -116,6 +116,32 @@
                                  referencedTableName="events"/>
 
         <addUniqueConstraint tableName="requests" columnNames="requester_id, event_id"/>
+
+        <createIndex indexName="idx_events_category_id" tableName="events">
+            <column name="category_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_events_author_id" tableName="events">
+            <column name="author_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_requests_requester_id" tableName="requests">
+            <column name="requester_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_requests_event_id" tableName="requests">
+            <column name="event_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_event_compilation_compilation_id" tableName="event_compilation">
+            <column name="compilation_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_event_compilation_event_id" tableName="event_compilation">
+            <column name="event_id"/>
+        </createIndex>
+
     </changeSet>
+
 
 </databaseChangeLog>

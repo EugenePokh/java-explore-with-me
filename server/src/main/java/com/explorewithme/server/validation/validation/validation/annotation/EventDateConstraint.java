@@ -1,4 +1,4 @@
-package com.explorewithme.server.annotation;
+package com.explorewithme.server.validation.annotation;
 
 
 import com.explorewithme.server.validation.EventDateValidator;

@@ -2,22 +2,17 @@ package com.explorewithme.server.dto;
 
 import lombok.Data;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.*;
 
 @Data
 public class UserRequestDto {
 
     @NotBlank
-    @Max(value = 250)
-    @Min(value = 2)
+    @Size(min = 2, max = 250)
     private String name;
 
     @NotBlank
     @Email
-    @Max(value = 254)
-    @Min(value = 6)
+    @Size(min = 6, max = 254)
     private String email;
 }

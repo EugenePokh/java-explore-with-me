@@ -5,9 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserResponseDto {
+public class CategoryResponseDto {
 
     private Integer id;
     private String name;
-    private String email;
 }

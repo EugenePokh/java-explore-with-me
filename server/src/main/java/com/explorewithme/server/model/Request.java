@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@ToString
 @Table(name = "requests")
 public class Request {
 
@@ -36,7 +35,8 @@ public class Request {
 
     public enum State {
         PENDING,
-        CANCELED,
-        CONFIRMED
+        REJECTED,
+        CONFIRMED,
+        CANCELED
     }
 }

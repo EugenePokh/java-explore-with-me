@@ -1,6 +1,9 @@
 package com.explorewithme.statsserver.service;
 
 import com.explorewithme.dto.HitCountResponseDto;
+import com.explorewithme.dto.HitRequestDto;
+import com.explorewithme.statsserver.exception.StatisticException;
+import com.explorewithme.statsserver.mapper.HitMapper;
 import com.explorewithme.statsserver.model.Hit;
 import com.explorewithme.statsserver.repository.HitRepository;
 import lombok.AllArgsConstructor;
@@ -21,12 +24,11 @@ public class HitService {
 
     private final HitRepository hitRepository;
 
-    public Hit save(Hit hit) {
-        logger.info("Save hit " + hit.toString());
-        return hitRepository.save(hit);
-    }
-
     public List<HitCountResponseDto> findHitCounts(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        if (end.isBefore(start)) {
+            throw new StatisticException("End date canot be before start date");
+        }
+
         List<HitCountResponseDto> hitCounts;
         if (Objects.nonNull(uris) && !uris.isEmpty() && !unique) {
             hitCounts = hitRepository.findHitCountsByUris(start, end, uris);
@@ -41,4 +43,10 @@ public class HitService {
         return hitCounts;
     }
 
+    public void post(HitRequestDto hitDto) {
+        Hit hit = HitMapper.toModel(hitDto);
+
+        Hit created = hitRepository.save(hit);
+        logger.info("Created hit " + hit.toString());
+    }
 }

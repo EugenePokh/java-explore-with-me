@@ -11,15 +11,15 @@ import java.util.Optional;
 
 public interface RequestRepository extends JpaRepository<Request, Integer> {
 
-    List<Request> findAllByRequester(User user);
+    List<Request> findByRequester(User user);
 
     Optional<Request> findByRequesterAndId(User user, Integer id);
 
-    List<Request> findAllByRequesterAndEvent(User user, Event event);
+    List<Request> findByEventAndIdIn(Event event, List<Integer> requestIds);
 
-    List<Request> findAllByEventAndIdIn(Event event, List<Integer> requestIds);
-
-    long countAllByEventAndState(Event event, Request.State confirmed);
+    long countAllByEventAndStateIn(Event event, List<Request.State> states);
 
     long countAllByIdInAndStateIn(List<Integer> ids, List<Request.State> states);
+
+    List<Request> findByEvent(Event event);
 }

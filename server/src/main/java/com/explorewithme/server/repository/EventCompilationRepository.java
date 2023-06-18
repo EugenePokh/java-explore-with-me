@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface EventCompilationRepository extends JpaRepository<EventCompilation, Integer> {
 
-    List<EventCompilation> findAllByCompilationAndEventIdIn(Compilation compilation, List<Integer> eventIds);
+    List<EventCompilation> findByCompilationAndEventIdIn(Compilation compilation, List<Integer> eventIds);
 }
