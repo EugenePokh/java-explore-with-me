@@ -13,7 +13,6 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@ToString
 @Table(name = "hits")
 public class Hit {
 

@@ -3,11 +3,13 @@ package com.explorewithme.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
 @AllArgsConstructor
-public class HitCountResponse {
+@NoArgsConstructor
+public class HitCountResponseDto {
 
     private String app;
     private String uri;

@@ -18,4 +18,5 @@ public class StatsClientConfig {
                                    RestTemplate restTemplate) {
         return new StatsClient(uri, restTemplate);
     }
+
 }

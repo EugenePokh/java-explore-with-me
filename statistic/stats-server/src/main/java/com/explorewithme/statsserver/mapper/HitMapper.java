@@ -1,11 +1,13 @@
 package com.explorewithme.statsserver.mapper;
 
-import com.explorewithme.dto.HitRequest;
+import com.explorewithme.dto.HitRequestDto;
 import com.explorewithme.statsserver.model.Hit;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class HitMapper {
 
-    public static Hit toModel(HitRequest hitDto) {
+    public Hit toModel(HitRequestDto hitDto) {
         return Hit.builder()
                 .app(hitDto.getApp())
                 .uri(hitDto.getUri())
