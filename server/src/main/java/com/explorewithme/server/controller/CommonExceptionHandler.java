@@ -83,7 +83,7 @@ public class CommonExceptionHandler {
                 .body(errorMessageDto);
     }
 
-    @ExceptionHandler({RequestValidationException.class, EventValidationException.class})
+    @ExceptionHandler({RequestValidationException.class, EventValidationException.class, CommentValidationException.class})
     public ResponseEntity<ErrorMessageDto> onValicationException(Exception ex) {
         logger.error(ex.getMessage(), ex);
         ErrorMessageDto errorMessageDto = ErrorMessageDto.builder()

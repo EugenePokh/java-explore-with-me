@@ -1,7 +1,7 @@
 package com.explorewithme.server.dto;
 
-import com.explorewithme.server.validation.annotation.CommonCheck;
-import com.explorewithme.server.validation.annotation.AdvancedCheck;
+import com.explorewithme.server.validation.group.CommonCheck;
+import com.explorewithme.server.validation.group.AdvancedCheck;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;

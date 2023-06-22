@@ -54,7 +54,7 @@ public class CompilationService {
             List<Event> eventCompilations = eventService.findAllByIdIn(dto.getEvents());
             compilation.setEvents(new HashSet<>(eventCompilations));
         }
-        Compilation created = compilationRepository.saveAndFlush(compilation);
+        Compilation created = compilationRepository.save(compilation);
         logger.info("Created compilation - " + created);
 
         return CompilationMapper.toDto(created);

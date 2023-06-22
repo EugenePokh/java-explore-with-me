@@ -1,8 +1,8 @@
 package com.explorewithme.server.dto;
 
-import com.explorewithme.server.validation.annotation.EventDateConstraint;
-import com.explorewithme.server.validation.annotation.CommonCheck;
-import com.explorewithme.server.validation.annotation.AdvancedCheck;
+import com.explorewithme.server.validation.EventDateConstraint;
+import com.explorewithme.server.validation.group.CommonCheck;
+import com.explorewithme.server.validation.group.AdvancedCheck;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -37,6 +37,8 @@ public class EventRequestDto {
     private Integer participantLimit;
 
     private Boolean requestModeration;
+
+    private Boolean commentModeration;
 
     @NotBlank(groups = {AdvancedCheck.class})
     @Size(min = 3, max = 120, groups = {CommonCheck.class})

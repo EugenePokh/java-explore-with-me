@@ -1,7 +1,5 @@
 package com.explorewithme.server.validation;
 
-import com.explorewithme.server.validation.annotation.EventDateConstraint;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.time.LocalDateTime;
