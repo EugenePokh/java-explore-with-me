@@ -10,6 +10,19 @@
 			"name": "Создание комментария",
 			"event": [
 				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r",
+							"    pm.response.to.have.status(201);   \r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
 					"listen": "prerequest",
 					"script": {
 						"exec": [
@@ -65,40 +78,6 @@
 						],
 						"type": "text/javascript"
 					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r",
-							"    pm.response.to.have.status(201);   \r",
-							"    pm.response.to.be.withBody;\r",
-							"    pm.response.to.be.json;\r",
-							"});\r",
-							"/*\r",
-							"const target = pm.response.json();\r",
-							"var query = {};\r",
-							"pm.request.url.query.all().forEach((param) => { query[param.key] = param.value});\r",
-							"\r",
-							"pm.test(\"Запрос на участие должен содержать поля: id, requester, event, status, created\", function () {\r",
-							"pm.expect(target).to.have.property('id');\r",
-							"pm.expect(target).to.have.property('requester');\r",
-							"pm.expect(target).to.have.property('event');\r",
-							"pm.expect(target).to.have.property('status');\r",
-							"pm.expect(target).to.have.property('created');\r",
-							"});\r",
-							"\r",
-							"pm.test(\"При создании у запроса на участие должен быть статус PENDING\", function () {\r",
-							"    pm.expect(target.status).equal(\"PENDING\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Id ивента в запросе и в ответе должны совпадать\", function () {\r",
-							"    pm.expect(target.event.toString()).equal(query['eventId'].toString());\r",
-							"});\r",
-							"*/"
-						],
-						"type": "text/javascript"
-					}
 				}
 			],
 			"request": {
@@ -134,6 +113,19 @@
 		{
 			"name": "Изменение комментария",
 			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+							"    pm.response.to.have.status(200);   \r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
 				{
 					"listen": "prerequest",
 					"script": {
@@ -190,40 +182,6 @@
 							"    100 \r",
 							");\r",
 							""
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
-							"    pm.response.to.have.status(200);   \r",
-							"    pm.response.to.be.withBody;\r",
-							"    pm.response.to.be.json;\r",
-							"});\r",
-							"/*\r",
-							"const target = pm.response.json();\r",
-							"var query = {};\r",
-							"pm.request.url.query.all().forEach((param) => { query[param.key] = param.value});\r",
-							"\r",
-							"pm.test(\"Запрос на участие должен содержать поля: id, requester, event, status, created\", function () {\r",
-							"pm.expect(target).to.have.property('id');\r",
-							"pm.expect(target).to.have.property('requester');\r",
-							"pm.expect(target).to.have.property('event');\r",
-							"pm.expect(target).to.have.property('status');\r",
-							"pm.expect(target).to.have.property('created');\r",
-							"});\r",
-							"\r",
-							"pm.test(\"При создании у запроса на участие должен быть статус PENDING\", function () {\r",
-							"    pm.expect(target.status).equal(\"PENDING\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Id ивента в запросе и в ответе должны совпадать\", function () {\r",
-							"    pm.expect(target.event.toString()).equal(query['eventId'].toString());\r",
-							"});\r",
-							"*/"
 						],
 						"type": "text/javascript"
 					}
@@ -369,6 +327,19 @@
 			"name": "Создание комментария Copy",
 			"event": [
 				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+							"    pm.response.to.have.status(200);   \r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
 					"listen": "prerequest",
 					"script": {
 						"exec": [
@@ -418,40 +389,6 @@
 							"    100 \r",
 							");\r",
 							""
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
-							"    pm.response.to.have.status(200);   \r",
-							"    pm.response.to.be.withBody;\r",
-							"    pm.response.to.be.json;\r",
-							"});\r",
-							"/*\r",
-							"const target = pm.response.json();\r",
-							"var query = {};\r",
-							"pm.request.url.query.all().forEach((param) => { query[param.key] = param.value});\r",
-							"\r",
-							"pm.test(\"Запрос на участие должен содержать поля: id, requester, event, status, created\", function () {\r",
-							"pm.expect(target).to.have.property('id');\r",
-							"pm.expect(target).to.have.property('requester');\r",
-							"pm.expect(target).to.have.property('event');\r",
-							"pm.expect(target).to.have.property('status');\r",
-							"pm.expect(target).to.have.property('created');\r",
-							"});\r",
-							"\r",
-							"pm.test(\"При создании у запроса на участие должен быть статус PENDING\", function () {\r",
-							"    pm.expect(target.status).equal(\"PENDING\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Id ивента в запросе и в ответе должны совпадать\", function () {\r",
-							"    pm.expect(target.event.toString()).equal(query['eventId'].toString());\r",
-							"});\r",
-							"*/"
 						],
 						"type": "text/javascript"
 					}
@@ -629,6 +566,19 @@
 			"name": "модерация - отклонение комментария",
 			"event": [
 				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+							"    pm.response.to.have.status(200);   \r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
 					"listen": "prerequest",
 					"script": {
 						"exec": [
@@ -687,40 +637,6 @@
 							"    100 \r",
 							");\r",
 							""
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
-							"    pm.response.to.have.status(200);   \r",
-							"    pm.response.to.be.withBody;\r",
-							"    pm.response.to.be.json;\r",
-							"});\r",
-							"/*\r",
-							"const target = pm.response.json();\r",
-							"var query = {};\r",
-							"pm.request.url.query.all().forEach((param) => { query[param.key] = param.value});\r",
-							"\r",
-							"pm.test(\"Запрос на участие должен содержать поля: id, requester, event, status, created\", function () {\r",
-							"pm.expect(target).to.have.property('id');\r",
-							"pm.expect(target).to.have.property('requester');\r",
-							"pm.expect(target).to.have.property('event');\r",
-							"pm.expect(target).to.have.property('status');\r",
-							"pm.expect(target).to.have.property('created');\r",
-							"});\r",
-							"\r",
-							"pm.test(\"При создании у запроса на участие должен быть статус PENDING\", function () {\r",
-							"    pm.expect(target.status).equal(\"PENDING\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Id ивента в запросе и в ответе должны совпадать\", function () {\r",
-							"    pm.expect(target.event.toString()).equal(query['eventId'].toString());\r",
-							"});\r",
-							"*/"
 						],
 						"type": "text/javascript"
 					}
