@@ -23,5 +23,5 @@ public interface RequestRepository extends JpaRepository<Request, Integer> {
 
     List<Request> findByEvent(Event event);
 
-    Optional<Request> findByRequesterAndEvent(User user, Event event);
+    boolean existsByEventAndRequesterAndState(Event event, User user, Request.State confirmed);
 }

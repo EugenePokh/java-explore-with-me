@@ -47,13 +47,9 @@ public class CommentService {
         Event event = eventRepository.findById(dto.getEventId())
                 .orElseThrow(() -> new EventNotFoundException("No such event with id - " + dto.getEventId()));
 
-        event.getRequests()
-                .stream()
-                .filter(request -> request.getState() == Request.State.CONFIRMED)
-                .map(Request::getRequester)
-                .filter(author -> Objects.equals(author.getId(), userId))
-                .findFirst()
-                .orElseThrow(() -> new CommentValidationException("Cannot comment event without confirmed request"));
+        if (!requestRepository.existsByEventAndRequesterAndState(event, user, Request.State.CONFIRMED)) {
+            throw new CommentValidationException("Cannot comment event without confirmed request");
+        }
 
         Comment.State state = Comment.State.PUBLISHED;
         if (event.getCommentModeration()) {
@@ -95,11 +91,9 @@ public class CommentService {
             comment.setState(Comment.State.PUBLISHED);
         }
 
-        Comment updated = commentRepository.save(comment);
+        logger.info("Updated comment - " + comment);
 
-        logger.info("Updated comment - " + updated);
-
-        return CommentMapper.toDto(updated);
+        return CommentMapper.toDto(comment);
     }
 
     @Transactional
@@ -124,11 +118,9 @@ public class CommentService {
             comment.setState(Comment.State.PENDING);
         }
 
-        Comment updated = commentRepository.save(comment);
+        logger.info("Updated comment - " + comment);
 
-        logger.info("Updated comment - " + updated);
-
-        return CommentMapper.toDto(updated);
+        return CommentMapper.toDto(comment);
     }
 
     @Transactional

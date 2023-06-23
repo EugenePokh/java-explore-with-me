@@ -98,7 +98,7 @@ public class CommonExceptionHandler {
                 .body(errorMessageDto);
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(Throwable.class)
     public ResponseEntity<ErrorMessageDto> onException(Throwable ex) {
         logger.error(ex.getMessage(), ex);
         ErrorMessageDto errorMessageDto = ErrorMessageDto.builder()

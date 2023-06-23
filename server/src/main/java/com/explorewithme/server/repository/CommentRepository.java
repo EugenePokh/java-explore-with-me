@@ -12,5 +12,5 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     Optional<Comment> findByIdAndUser(Integer id, User user);
 
-    List<Comment> findByEventAndStateIn(Event event, List<Comment.State> asList);
+    List<Comment> findByEventAndStateIn(Event event, List<Comment.State> states);
 }

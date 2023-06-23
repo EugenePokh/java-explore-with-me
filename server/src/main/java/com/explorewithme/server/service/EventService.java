@@ -137,11 +137,6 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public List<Event> findAllByIdIn(List<Integer> events) {
-        return eventRepository.findAllByIdIn(events);
-    }
-
-    @Transactional(readOnly = true)
     public Page<EventResponseShortDto> findAllBySearch(String text,
                                                       List<Integer> categories,
                                                       Boolean paid,
@@ -247,10 +242,9 @@ public class EventService {
             event.setState(state);
         }
 
-        Event updated = eventRepository.save(event);
-        logger.info("Updated event - " + updated);
+        logger.info("Updated event - " + event);
 
-        return EventMapper.toFullDto(updated, null);
+        return EventMapper.toFullDto(event, null);
     }
 
     @Transactional
@@ -324,10 +318,9 @@ public class EventService {
             event.setState(state);
         }
 
-        Event updated = eventRepository.save(event);
         logger.info("Updated event - " + event);
 
-        return EventMapper.toFullDto(updated, null);
+        return EventMapper.toFullDto(event, null);
     }
 
     @Transactional
