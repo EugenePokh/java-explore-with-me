@@ -53,10 +53,9 @@ public class CategoryService {
                 .orElseThrow(() -> new CategoryNotFoundException("No such category with id - " + categoryId));
         category.setName(categoryRequestDto.getName());
 
-        Category updated = categoryRepository.save(category);
-        logger.info("Updated category - " + updated);
+        logger.info("Updated category - " + category);
 
-        return CategoryMapper.toDto(updated);
+        return CategoryMapper.toDto(category);
     }
 
     @Transactional(readOnly = true)

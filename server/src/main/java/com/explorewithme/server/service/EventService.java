@@ -1,5 +1,6 @@
 package com.explorewithme.server.service;
 
+import com.explorewithme.dto.HitCountResponseDto;
 import com.explorewithme.dto.HitRequestDto;
 import com.explorewithme.server.controller.EventController;
 import com.explorewithme.server.dto.EventRequestDto;
@@ -28,9 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.explorewithme.server.controller.EventController.EventSort.EVENT_DATE;
 
@@ -88,8 +88,22 @@ public class EventService {
         }
         PageRequest page = PageRequest.of(from / size, size);
 
-        return eventRepository.search(users, states, categories, rangeStart, rangeEnd, page)
-                .map(event -> EventMapper.toFullDto(event, null));
+        Page<Event> events = eventRepository.search(users, states, categories, rangeStart, rangeEnd, page);
+
+        List<String> uris = events.getContent()
+                .stream()
+                .map(event -> "/events/" + event.getId())
+                .collect(Collectors.toList());
+
+        Map<Integer, Long> requestDtos = new HashMap<>();
+        client.findHitCountsByUrisUnique(
+                        LocalDateTime.now().minusDays(1),
+                        LocalDateTime.now().plusDays(1),
+                        uris)
+                .forEach(response -> requestDtos.put(Integer.valueOf(response.getUri().replace("/events/", "")), response.getHits()));
+
+        return events
+                .map(event -> EventMapper.toFullDto(event, requestDtos.get(event.getId())));
     }
 
     @Transactional(readOnly = true)
@@ -103,16 +117,19 @@ public class EventService {
                 .uri(httpServletRequest.getRequestURI())
                 .build());
 
-        long hits = client.findHitCountsByUrisUnique(
-                        LocalDateTime.now().minusDays(1),
-                        LocalDateTime.now().plusDays(1),
-                        Arrays.asList("/events/" + eventId))
-                .get(0)
-                .getHits();
+        List<HitCountResponseDto> requestDtos = client.findHitCountsByUrisUnique(
+                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().plusDays(1),
+                Arrays.asList("/events/" + eventId));
+
+        long hits = 0;
+        if (requestDtos != null && !requestDtos.isEmpty()) {
+            hits = requestDtos.get(0)
+                    .getHits();
+        }
 
         EventResponseFullDto dto = EventMapper.toFullDto(
-                eventRepository.findById(eventId)
-                        .filter(event -> event.getState() == Event.State.PUBLISHED)
+                eventRepository.findByIdAndState(eventId, Event.State.PUBLISHED)
                         .orElseThrow(() -> new EventNotFoundException("No such event with id - " + eventId)),
                 hits);
 
@@ -120,12 +137,7 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public List<Event> findAllByIdIn(List<Integer> events) {
-        return eventRepository.findAllByIdIn(events);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<EventResponseFullDto> findAllBySearch(String text,
+    public Page<EventResponseShortDto> findAllBySearch(String text,
                                                       List<Integer> categories,
                                                       Boolean paid,
                                                       Boolean onlyAvailable,
@@ -158,7 +170,7 @@ public class EventService {
         PageRequest page = PageRequest.of(from / size, size, sortValue);
 
         return eventRepository.search(text, categories, paid, onlyAvailable, rangeStart, rangeEnd, page)
-                .map(event -> EventMapper.toFullDto(event, null));
+                .map(EventMapper::toShortDto);
     }
 
     @Transactional
@@ -176,6 +188,10 @@ public class EventService {
 
         if (Objects.nonNull(eventRequestDto.getRequestModeration())) {
             event.setRequestModeration(eventRequestDto.getRequestModeration());
+        }
+
+        if (Objects.nonNull(eventRequestDto.getCommentModeration())) {
+            event.setCommentModeration(eventRequestDto.getCommentModeration());
         }
 
         if (Objects.nonNull(eventRequestDto.getCategory())) {
@@ -226,10 +242,9 @@ public class EventService {
             event.setState(state);
         }
 
-        Event updated = eventRepository.save(event);
-        logger.info("Updated event - " + updated);
+        logger.info("Updated event - " + event);
 
-        return EventMapper.toFullDto(updated, null);
+        return EventMapper.toFullDto(event, null);
     }
 
     @Transactional
@@ -253,6 +268,10 @@ public class EventService {
 
         if (Objects.nonNull(eventRequestDto.getRequestModeration())) {
             event.setRequestModeration(eventRequestDto.getRequestModeration());
+        }
+
+        if (Objects.nonNull(eventRequestDto.getCommentModeration())) {
+            event.setCommentModeration(eventRequestDto.getCommentModeration());
         }
 
         if (Objects.nonNull(eventRequestDto.getCategory())) {
@@ -299,10 +318,9 @@ public class EventService {
             event.setState(state);
         }
 
-        Event updated = eventRepository.save(event);
         logger.info("Updated event - " + event);
 
-        return EventMapper.toFullDto(updated, null);
+        return EventMapper.toFullDto(event, null);
     }
 
     @Transactional
@@ -323,6 +341,7 @@ public class EventService {
                 .paid(Objects.isNull(eventRequestDto.getPaid()) ? false : eventRequestDto.getPaid())
                 .participantLimit(Objects.isNull(eventRequestDto.getParticipantLimit()) ? 0 : eventRequestDto.getParticipantLimit())
                 .requestModeration(Objects.isNull(eventRequestDto.getRequestModeration()) ? true : eventRequestDto.getRequestModeration())
+                .commentModeration(Objects.isNull(eventRequestDto.getCommentModeration()) ? true : eventRequestDto.getCommentModeration())
                 .title(eventRequestDto.getTitle())
                 .state(Event.State.PENDING)
                 .created(LocalDateTime.now())
@@ -332,6 +351,6 @@ public class EventService {
         Event created = eventRepository.save(event);
         logger.info("Created event - " + created);
 
-        return EventMapper.toFullDto(created, null);
+        return EventMapper.toFullDto(created, 0L);
     }
 }

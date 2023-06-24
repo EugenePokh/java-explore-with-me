@@ -42,7 +42,8 @@
             <column name="lon" type="DOUBLE" remarks="долгота"/>
             <column name="paid" type="BOOLEAN" remarks="оплачено"/>
             <column name="participant_limit" type="INTEGER" remarks="лимит участников"/>
-            <column name="req_moderation" type="BOOLEAN" remarks="запрос на модерацию"/>
+            <column name="req_moderation" type="BOOLEAN" remarks="модерация запросов"/>
+            <column name="com_moderation" type="BOOLEAN" remarks="модерация комментариев"/>
             <column name="title" type="VARCHAR(120)" remarks="название"/>
             <column name="state" type="VARCHAR(255)" remarks="статус"/>
             <column name="created" type="DATETIME" remarks="время создания"/>
@@ -73,6 +74,17 @@
             </column>
             <column name="compilation_id" type="INTEGER" remarks="подборка"/>
             <column name="event_id" type="INTEGER" remarks="событие"/>
+        </createTable>
+
+        <createTable tableName="comments" remarks="комментарии участиков событий">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="user_id" type="INTEGER" remarks="автор"/>
+            <column name="event_id" type="INTEGER" remarks="событие"/>
+            <column name="text" type="VARCHAR(255)" remarks="комментарий"/>
+            <column name="state" type="VARCHAR(255)" remarks="статус"/>
+            <column name="created" type="DATETIME" remarks="время создания"/>
         </createTable>
 
     </changeSet>
@@ -115,6 +127,18 @@
                                  referencedColumnNames="id"
                                  referencedTableName="events"/>
 
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="comments"
+                                 constraintName="fk_comments_user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
+
+        <addForeignKeyConstraint baseColumnNames="event_id"
+                                 baseTableName="comments"
+                                 constraintName="fk_comments_event_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="events"/>
+
         <addUniqueConstraint tableName="requests" columnNames="requester_id, event_id"/>
 
         <createIndex indexName="idx_events_category_id" tableName="events">
@@ -123,6 +147,22 @@
 
         <createIndex indexName="idx_events_author_id" tableName="events">
             <column name="author_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_events_annotation" tableName="events">
+            <column name="annotation"/>
+        </createIndex>
+
+        <createIndex indexName="idx_events_event_date" tableName="events">
+            <column name="event_date"/>
+        </createIndex>
+
+        <createIndex indexName="idx_events_state" tableName="events">
+            <column name="state"/>
+        </createIndex>
+
+        <createIndex indexName="idx_events_paid" tableName="events">
+            <column name="paid"/>
         </createIndex>
 
         <createIndex indexName="idx_requests_requester_id" tableName="requests">
@@ -139,6 +179,14 @@
 
         <createIndex indexName="idx_event_compilation_event_id" tableName="event_compilation">
             <column name="event_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_comments_event_id" tableName="comments">
+            <column name="event_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_comments_user_id" tableName="comments">
+            <column name="user_id"/>
         </createIndex>
 
     </changeSet>

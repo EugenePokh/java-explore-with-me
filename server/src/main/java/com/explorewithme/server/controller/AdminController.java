@@ -3,8 +3,8 @@ package com.explorewithme.server.controller;
 import com.explorewithme.server.dto.*;
 import com.explorewithme.server.model.*;
 import com.explorewithme.server.service.*;
-import com.explorewithme.server.validation.annotation.CommonCheck;
-import com.explorewithme.server.validation.annotation.AdvancedCheck;
+import com.explorewithme.server.validation.group.CommonCheck;
+import com.explorewithme.server.validation.group.AdvancedCheck;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -25,6 +25,7 @@ public class AdminController {
     private final EventService eventService;
     private final UserService userService;
     private final CompilationService compilationService;
+    private final CommentService commentService;
 
     @PostMapping("/categories")
     public ResponseEntity<CategoryResponseDto> postCategory(@RequestBody @Valid CategoryRequestDto categoryRequestDto) {
@@ -82,6 +83,12 @@ public class AdminController {
     public EventResponseFullDto patchEvent(@PathVariable Integer eventId,
                                            @RequestBody @Validated({CommonCheck.class}) EventRequestDto eventRequestDto) {
         return eventService.patch(eventId, eventRequestDto);
+    }
+
+    @PatchMapping("/comments/{commentId}")
+    public CommentResponseDto patchComment(@PathVariable Integer commentId,
+                                           @RequestBody @Validated({CommonCheck.class}) CommentRequestDto commentRequestDto) {
+        return commentService.patch(commentId, commentRequestDto);
     }
 
     @PostMapping("/compilations")

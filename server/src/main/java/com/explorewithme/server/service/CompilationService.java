@@ -7,6 +7,7 @@ import com.explorewithme.server.mapper.CompilationMapper;
 import com.explorewithme.server.model.Compilation;
 import com.explorewithme.server.model.Event;
 import com.explorewithme.server.repository.CompilationRepository;
+import com.explorewithme.server.repository.EventRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public class CompilationService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final EventService eventService;
+    private final EventRepository eventRepository;
 
     private final CompilationRepository compilationRepository;
 
@@ -51,10 +52,10 @@ public class CompilationService {
         compilation.setTitle(dto.getTitle());
 
         if (dto.getEvents() != null) {
-            List<Event> eventCompilations = eventService.findAllByIdIn(dto.getEvents());
+            List<Event> eventCompilations = eventRepository.findAllByIdIn(dto.getEvents());
             compilation.setEvents(new HashSet<>(eventCompilations));
         }
-        Compilation created = compilationRepository.saveAndFlush(compilation);
+        Compilation created = compilationRepository.save(compilation);
         logger.info("Created compilation - " + created);
 
         return CompilationMapper.toDto(created);
@@ -70,7 +71,7 @@ public class CompilationService {
             if (dto.getEvents().isEmpty()) {
                 eventCompilations = new ArrayList<>();
             } else {
-                eventCompilations = eventService.findAllByIdIn(dto.getEvents());
+                eventCompilations = eventRepository.findAllByIdIn(dto.getEvents());
             }
             compilation.setEvents(new HashSet<>(eventCompilations));
         }
@@ -83,10 +84,9 @@ public class CompilationService {
             compilation.setPinned(dto.getPinned());
         }
 
-        Compilation updated = compilationRepository.save(compilation);
-        logger.info("Updated compilation - " + updated);
+        logger.info("Updated compilation - " + compilation);
 
-        return CompilationMapper.toDto(updated);
+        return CompilationMapper.toDto(compilation);
     }
 
     @Transactional
